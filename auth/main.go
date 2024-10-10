@@ -13,7 +13,7 @@ func init() {
 	utils.LoadSecrets()
 	utils.ConnectToDB()
 
-	if os.Getenv("ENV") == "PROD" {
+	if os.Getenv("ENV") == "DEV" {
 		utils.SyncDB()
 	}
 }
@@ -23,6 +23,7 @@ func main() {
 
 	r.POST("/signup", controllers.Signup)
 	r.POST("/login", controllers.Login)
+	r.POST("/refresh", controllers.RefreshToken)
 	r.GET("/validate", middleware.Auth, controllers.Validate)
 
 	r.Run()

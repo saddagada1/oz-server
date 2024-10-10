@@ -1,0 +1,11 @@
+*.exe
+
+# Docker-related files
+.dockerignore
+.dockerignore.sample
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

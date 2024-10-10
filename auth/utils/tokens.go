@@ -17,7 +17,7 @@ func CreateAccessToken(userId uint, version uint) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userId,
-		"exp": time.Now().Add(time.Duration(expiry)).Unix(),
+		"exp": time.Now().Add(time.Duration(expiry) * time.Second).Unix(),
 	})
 
 	return token.SignedString([]byte(os.Getenv("ACCESS_TOKEN_SECRET")))
@@ -32,7 +32,7 @@ func CreateRefreshToken(userId uint, version uint) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userId,
-		"exp": time.Now().Add(time.Duration(expiry)).Unix(),
+		"exp": time.Now().Add(time.Duration(expiry) * time.Second).Unix(),
 	})
 
 	return token.SignedString([]byte(os.Getenv("REFRESH_TOKEN_SECRET")))

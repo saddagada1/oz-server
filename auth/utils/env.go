@@ -8,7 +8,7 @@ import (
 
 func LoadSecrets() {
 	err := godotenv.Load()
-    if err != nil {
-      log.Fatal("error loading .env file")
-    }
+	if err != nil {
+		log.Println("No .env file path provided. Using system environment variables.")
+	}
 }

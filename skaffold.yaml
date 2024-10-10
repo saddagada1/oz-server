@@ -1,0 +1,31 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: oz-server-skaffold
+manifests:
+  kustomize:
+    paths:
+      - ./k8s/
+build:
+  artifacts:
+    - image: oz/gateway
+      context: ./gateway
+      docker:
+        dockerfile: ./gateway/Dockerfile
+      sync:
+        infer:
+          - "./gateway/*"
+    - image: oz/auth
+      context: ./auth
+      docker:
+        dockerfile: ./auth/Dockerfile
+      sync:
+        infer:
+          - "./auth/*"
+    - image: oz/vision
+      context: ./vision
+      docker:
+        dockerfile: ./vision/Dockerfile
+      sync:
+        infer:
+          - "./vision/*"

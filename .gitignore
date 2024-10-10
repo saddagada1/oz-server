@@ -1,2 +1,4 @@
 .env
 *.exe
+venv
+k8s/kustomization.yaml

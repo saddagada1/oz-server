@@ -1,0 +1,94 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ./manifests/
+
+patches:
+  - target:
+      name: postgres-configuration
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: postgres-configuration
+      data:
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+
+  - target:
+      name: postgres-credentials
+    patch: |-
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: postgres-credentials
+      type: Opaque
+      data:
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_BASE64}
+
+  - target:
+      name: auth-configuration
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: auth-configuration
+      data:
+        ENV: ${ENV}
+        PORT: ${AUTH_PORT}
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_HOST: ${POSTGRES_HOST}
+        POSTGRES_PORT: ${POSTGRES_PORT}
+
+  - target:
+      name: auth-credentials
+    patch: |-
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: auth-credentials
+      type: Opaque
+      stringData:
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+        REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+        ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN}
+        REFRESH_TOKEN_EXPIRES_IN: ${REFRESH_TOKEN_EXPIRES_IN}
+        GOOGLE_API_CLIENT: ${GOOGLE_API_CLIENT}
+        GOOGLE_API_SECRET: ${GOOGLE_API_SECRET}
+
+  - target:
+      name: gateway-configuration
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: gateway-configuration
+      data:
+        ENV: ${ENV}
+        AUTH_ENDPOINT: ${AUTH_ENDPOINT}
+        VISION_ENDPOINT: ${VISION_ENDPOINT}
+
+  - target:
+      name: vision-configuration
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: vision-configuration
+      data:
+        ENV: ${ENV}
+
+  - target:
+      name: vision-credentials
+    patch: |-
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: vision-credentials
+      type: Opaque
+      stringData:
+        EBAY_CLIENT_ID: ${EBAY_CLIENT_ID}
+        EBAY_CLIENT_SECRET: ${EBAY_CLIENT_SECRET}

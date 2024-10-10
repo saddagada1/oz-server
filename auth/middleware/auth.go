@@ -14,25 +14,25 @@ import (
 func Auth(c *gin.Context) {
 	header := c.GetHeader("Authorization")
 	if header == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "no auth header"})
+		c.JSON(http.StatusBadRequest, gin.H{"subject": "request", "message": "no auth header"})
 		c.Abort()
 		return
 	}
 
 	if !strings.HasPrefix(header, "Bearer ") {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "malformed auth header"})
+		c.JSON(http.StatusBadRequest, gin.H{"subject": "request", "message": "malformed auth header"})
 		c.Abort()
 		return
 	}
 
 	token := strings.TrimPrefix(header, "Bearer ")
 	if token == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "malformed token"})
+		c.JSON(http.StatusUnauthorized, gin.H{"subject": "token", "message": "malformed token"})
 		c.Abort()
 		return
 	}
 
-	payload, _ := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+	payload, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("invalid signature: %v", t.Header)
 		}
@@ -40,9 +40,15 @@ func Auth(c *gin.Context) {
 		return []byte(os.Getenv("ACCESS_TOKEN_SECRET")), nil
 	})
 
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"subject": "token", "message": "invalid token"})
+		c.Abort()
+		return
+	}
+
 	if claims, ok := payload.Claims.(jwt.MapClaims); ok && payload.Valid {
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "expired token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"subject": "token", "message": "expired token"})
 			c.Abort()
 			return
 		}
