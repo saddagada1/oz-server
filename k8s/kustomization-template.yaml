@@ -68,6 +68,7 @@ patches:
         name: gateway-configuration
       data:
         ENV: ${ENV}
+        CLIENT_PROTOCOL: ${CLIENT_PROTOCOL}
         AUTH_ENDPOINT: ${AUTH_ENDPOINT}
         VISION_ENDPOINT: ${VISION_ENDPOINT}
 
